@@ -16,16 +16,7 @@
 - [What It Does](#what-it-does)
 - [Stack](#stack)
 - [Quick Start](#quick-start)
-- [API Examples](#api-examples)
-- [Project Structure](#project-structure)
-- [Milestones](#milestones)
-- [Key Design Decisions](#key-design-decisions)
-- [Testing](#testing)
-- [Error Shape](#error-shape)
-- [Documentation](#documentation)
-- [What's Not in Scope](#whats-not-in-scope)
-- [Demo Video](#demo-video)
-- [License](#license)
+  
 
 ---
 
