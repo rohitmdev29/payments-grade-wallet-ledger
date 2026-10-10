@@ -1,0 +1,69 @@
+﻿name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: wallet
+          POSTGRES_PASSWORD: wallet
+          POSTGRES_DB: wallet_test
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -r requirements.txt
+
+      - name: Run migrations
+        env:
+          PGPASSWORD: wallet
+        run: |
+          psql -h localhost -U wallet -d wallet_test -f migrations/001_init_schema.sql
+          psql -h localhost -U wallet -d wallet_test -f migrations/002_seed_system_accounts.sql
+          psql -h localhost -U wallet -d wallet_test -f migrations/003_seed_risk_rules.sql
+
+      - name: Seed test users and accounts
+        env:
+          PGPASSWORD: wallet
+        run: |
+          psql -h localhost -U wallet -d wallet_test -c "
+            INSERT INTO users (name, email, phone, kyc_status) VALUES
+              ('Rohit', 'rohit@test.com', '+910000000001', 'VERIFIED'),
+              ('Kamya', 'kamya@test.com', '+910000000002', 'VERIFIED');
+
+            INSERT INTO wallets (user_id, name) VALUES
+              (1, 'Main Wallet'),
+              (2, 'Main Wallet');
+
+            INSERT INTO accounts (wallet_id, type, balance, currency) VALUES
+              (1, 'USER', 0, 'INR'),
+              (2, 'USER', 0, 'INR');
+          "
+
+      - name: Run tests
+        working-directory: backend
+        env:
+          DATABASE_URL: postgresql+asyncpg://wallet:wallet@localhost:5432/wallet_test
+          LLM_PROVIDER: mock
+        run: pytest -v

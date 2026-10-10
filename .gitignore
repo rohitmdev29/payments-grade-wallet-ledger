@@ -1,0 +1,62 @@
+﻿@'
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+.python-version
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ===========================
+# Virtual environments
+# ===========================
+.env
+.venv/
+venv/
+ENV/
+env/
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+
+# ===========================
+# IDE / Editor
+# ===========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ===========================
+# OS
+# ===========================
+.DS_Store
+Thumbs.db
+Desktop.ini
+*~
+
+# ===========================
+# Project-specific
+# ===========================
+report.html
+report.xml
+*.pdf
+backend/report.html
+
+# ===========================
+# Docker
+# ===========================
+pgdata/
+'@ | Out-File -Encoding utf8 .gitignore
